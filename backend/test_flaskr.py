@@ -1,23 +1,27 @@
 import unittest
 import json
+import os
+from dotenv import load_dotenv
+
 
 from flaskr import create_app
 from models import db, Question, Category
-
+load_dotenv()
 
 class TriviaTestCase(unittest.TestCase):
     """This class represents the trivia test case"""
 
     def setUp(self):
+        self.database_path = os.getenv("DATABASE_TEST_URL")
         """Define test variables and initialize app."""
-        self.database_name = "trivia_test"
-        self.database_user = "postgres"
-        self.database_password = "Kkesh1234"   
-        self.database_host = "localhost:5432"
-        self.database_path = (
-            f"postgresql://{self.database_user}:{self.database_password}"
-            f"@{self.database_host}/{self.database_name}"
-        )
+
+        if not self.database_path:
+            raise RuntimeError(
+                "DATABASE_TEST_URL is not set. Add it to backend/.env "
+                "e.g. DATABASE_TEST_URL=postgresql://postgres:YOUR_PASSWORD@localhost:5432/trivia_test"
+            )
+            
+
 
         self.app = create_app({
             "SQLALCHEMY_DATABASE_URI": self.database_path,
